@@ -46,7 +46,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 # (Optional) copy static assets
 COPY --from=builder /app/assets ./assets
-# COPY --from=builder /app/public ./public
+COPY --from=builder /app/public ./public
 
 COPY --from=builder /app/src/database/sequelize/migrations ./src/database/sequelize/migrations
 COPY --from=builder /app/src/database/sequelize/sequelize.config.js ./src/database/sequelize/sequelize.config.js

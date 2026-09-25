@@ -59,7 +59,8 @@ export class AuthController {
     @Body() dto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if(!(process.env.ENABLE_ACCOUNT_APIS == 'true')) throw new ServiceUnavailableException('This API is temporarily disabled');
+    if (!(process.env.ENABLE_ACCOUNT_APIS == 'true'))
+      throw new ServiceUnavailableException('This API is temporarily disabled');
     return this.authService.register(dto.name, dto.email, dto.password, res);
   }
 
@@ -70,7 +71,8 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Invalid or expired token.' })
   @Post('verify-email')
   verifyEmail(@Body() dto: VerifyEmailDto) {
-    if(!(process.env.ENABLE_ACCOUNT_APIS == 'true')) throw new ServiceUnavailableException('This API is temporarily disabled');
+    if (!(process.env.ENABLE_ACCOUNT_APIS == 'true'))
+      throw new ServiceUnavailableException('This API is temporarily disabled');
     return this.authService.verifyEmail(dto.token);
   }
 
@@ -90,7 +92,8 @@ export class AuthController {
   })
   @Post('resend-verification')
   resendVerification(@Body() dto: ResendVerificationDto) {
-    if(!(process.env.ENABLE_ACCOUNT_APIS == 'true')) throw new ServiceUnavailableException('This API is temporarily disabled');
+    if (!(process.env.ENABLE_ACCOUNT_APIS == 'true'))
+      throw new ServiceUnavailableException('This API is temporarily disabled');
     return this.authService.resendVerification(dto.email);
   }
 
@@ -106,8 +109,6 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Reset link sent if email exists.' })
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
-
-    if(!(process.env.ENABLE_ACCOUNT_APIS == 'true')) throw new ServiceUnavailableException('This API is temporarily disabled');
     return this.authService.forgotPassword(dto.email);
   }
 
@@ -124,8 +125,6 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Invalid or expired token.' })
   @Post('reset-password')
   resetPassword(@Body() dto: ResetPasswordDto) {
-    if(!(process.env.ENABLE_ACCOUNT_APIS == 'true')) throw new ServiceUnavailableException('This API is temporarily disabled');
-
     return this.authService.resetPassword(dto.token, dto.password);
   }
 

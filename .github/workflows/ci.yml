@@ -67,6 +67,7 @@ jobs:
         run: |
           cat <<EOF > .env.production
           VITE_APP_NAME=Controlster
+          VITE_BASE_NAME=${{ vars.APP_BASE_NAME }}
           VITE_MOCK_API_ON=false
           VITE_API_BASE_URL=/api
           VITE_SOCKETIO_ENABLED=true

@@ -1,11 +1,9 @@
-import { API_BASE_URL, BACKEND_SERVER, MOCK_API_ON } from "@/config";
+import { API_BASE_URL, BACKEND_SERVER, BASE_NAME, MOCK_API_ON } from "@/config";
 import axios from "axios";
 
 const api = axios.create({
   baseURL:
-    MOCK_API_ON === true
-      ? API_BASE_URL
-      : `${BACKEND_SERVER}${API_BASE_URL}`,
+    MOCK_API_ON === true ? API_BASE_URL : `${BACKEND_SERVER}${API_BASE_URL}`,
   // headers: {
   //     "Content-Type": "application/json",
   // },
@@ -26,7 +24,7 @@ api.interceptors.response.use(
           "resend-verification",
         ].includes(routeName)
       ) {
-        window.location.href = "/login";
+        window.location.href = `${BASE_NAME}login`;
       }
     }
     return Promise.reject(err);

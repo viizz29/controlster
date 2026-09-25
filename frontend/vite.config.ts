@@ -4,8 +4,9 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  base: process.env.VITE_BASE_NAME || "/",
   optimizeDeps: {
-    include: ["lottie-react"]
+    include: ["lottie-react"],
   },
 
   resolve: {

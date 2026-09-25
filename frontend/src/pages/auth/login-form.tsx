@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { TextField, Button, Typography, Paper, Box, Alert } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Box,
+  Alert,
+} from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { APP_NAME } from "@/config";
-import { useLoginMutation, useVerifyOtpLoginMutation } from "@/hooks/use-auth-queries";
+import { APP_NAME, BASE_NAME } from "@/config";
+import {
+  useLoginMutation,
+  useVerifyOtpLoginMutation,
+} from "@/hooks/use-auth-queries";
 
 export default function LoginForm() {
   const [step, setStep] = useState<"credentials" | "otp">("credentials");
@@ -17,7 +27,7 @@ export default function LoginForm() {
   const gotoHome = () => {
     toast(`Welcome back to ${APP_NAME}!`);
     setTimeout(() => {
-      window.location.href = "/";
+      window.location.href = `${BASE_NAME}`;
     }, 1000);
   };
 
@@ -112,7 +122,9 @@ export default function LoginForm() {
                   <Link to="/forgot-password">Forgot Password?</Link>
                 </Typography>
                 <Typography variant="body2" sx={{ textAlign: "center" }}>
-                  <Link to="/resend-verification">Resend verification email</Link>
+                  <Link to="/resend-verification">
+                    Resend verification email
+                  </Link>
                 </Typography>
               </Box>
             )}
@@ -137,7 +149,8 @@ export default function LoginForm() {
                 sx={{ display: "flex", flexDirection: "column", gap: 2 }}
               >
                 <Typography variant="body2" color="text.secondary">
-                  A one-time password has been sent to your email. Enter it below to complete login.
+                  A one-time password has been sent to your email. Enter it
+                  below to complete login.
                 </Typography>
                 <TextField
                   fullWidth

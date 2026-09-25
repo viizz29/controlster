@@ -1,6 +1,10 @@
 export const APP_NAME = import.meta.env.VITE_APP_NAME
   ? import.meta.env.VITE_APP_NAME
   : "App Name";
+
+export const BASE_NAME = import.meta.env.VITE_BASE_NAME
+  ? import.meta.env.VITE_BASE_NAME
+  : "/";
 export const MOCK_API_ON = import.meta.env.VITE_MOCK_API_ON == "true";
 export const BACKEND_SERVER = import.meta.env.VITE_BACKEND_SERVER
   ? import.meta.env.VITE_BACKEND_SERVER

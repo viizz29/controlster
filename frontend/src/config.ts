@@ -11,7 +11,7 @@ export const BACKEND_SERVER = import.meta.env.VITE_BACKEND_SERVER
   : "";
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? import.meta.env.VITE_API_BASE_URL
-  : "/api";
+  : `${BASE_NAME}api`;
 export const SOCKETIO_ENABLED = import.meta.env.VITE_SOCKETIO_ENABLED == "true";
 export const SOCKETIO_ENDPOINT = import.meta.env.VITE_SOCKETIO_ENDPOINT
   ? import.meta.env.VITE_SOCKETIO_ENDPOINT

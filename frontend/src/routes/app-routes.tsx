@@ -5,7 +5,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "../components/layouts/main-layout";
 import { CircularProgress, Box } from "@mui/material";
 import { useAuth } from "@/context/use-auth";
-import { BASE_NAME } from "@/config";
 
 // Lazy pages (code splitting)
 const Home = lazy(() => import("../pages/home/home"));

@@ -1,7 +1,5 @@
-import { APP_NAME } from "@/config";
 import { usePageTitle } from "@/hooks/use-page-title";
-import { Box, Paper, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { Box, Paper } from "@mui/material";
 
 
 export default function Home() {

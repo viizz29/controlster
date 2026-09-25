@@ -1,4 +1,3 @@
-import { useStorage } from "@/components/misc/local-storage-provider";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -9,6 +8,7 @@ import {
   type SelectChangeEvent,
   InputLabel,
 } from "@mui/material";
+import { useStorage } from "@/providers/local-storage-provider";
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();

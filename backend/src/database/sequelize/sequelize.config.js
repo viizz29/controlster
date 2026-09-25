@@ -1,5 +1,9 @@
 // src/database/sequelize.config.js
-// require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` });
+
+if(process.env.NODE_ENV == 'local')
+  require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` });
+
+// console.log(process.env.DB_PASSWORD);
 const PASS = decodeURIComponent(process.env.DB_PASSWORD);
 
 module.exports = {

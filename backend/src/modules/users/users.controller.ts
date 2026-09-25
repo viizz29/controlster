@@ -24,6 +24,7 @@ export class UsersController {
   @SkipEmailVerification()
   @Get('me')
   getProfile(@CurrentUser() user: { userId: string }) {
+    console.log("Hi");
     return this.usersService.findById(user.userId);
   }
 

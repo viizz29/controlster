@@ -67,6 +67,7 @@ export class AuthService {
     isEmailVerified: boolean;
   }): string {
     const jti = crypto.randomUUID();
+
     return this.jwtService.sign({ ...payload, jti }, { expiresIn: '7d' });
   }
 
@@ -282,6 +283,8 @@ export class AuthService {
         'Please verify your email before logging in',
       );
     }
+
+    
 
     const userDetails = {
       userId: user.id,

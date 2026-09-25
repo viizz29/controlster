@@ -1,0 +1,160 @@
+# 🚀 Project Name
+
+Chat Application
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Home Page
+
+![Home Screen](docs/images/1.png)
+
+### 💬 Chat / Main Feature
+
+![Chat Screen](docs/images/2.png)
+
+> Place your images inside `docs/images/` folder
+
+---
+
+## 🧰 Tech Stack
+
+- ⚛️ React (TypeScript)
+- 🎨 Tailwind CSS / Material UI
+- 🔌 Axios
+- 🔄 State Management (Context API)
+- 🔗 Socket.io
+
+---
+
+## 📂 Project Structure
+
+```
+src/
+├── assets/        # Images, icons, static files
+├── components/    # Reusable UI components
+├── features/      # Page-level components
+├── hooks/         # Custom hooks
+├── api/           # API calls
+├── mocks/         # Mock API calls
+├── routes/        # Routes
+├── i18n/          # Translations
+├── App.tsx
+└── main.tsx
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/viizz29/chat-app-frontend
+
+# Navigate to project
+cd chat-app-frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+---
+
+## 🌐 Environment Variables
+
+Create a `.env` file in root:
+
+```
+VITE_APP_NAME=ChatApp
+VITE_MOCK_API_ON=false
+VITE_BACKEND_SERVER=http://localhost:3000
+VITE_API_BASE_URL=/api
+VITE_SOCKETIO_ENDPOINT=/ws
+
+```
+
+---
+
+## ✨ Features
+
+- 🔐 Authentication (Login / Logout)
+- 💬 Real-time chat
+- 📱 Responsive design
+- 🌙 Dark / Light mode
+- ⚡ Fast and optimized performance
+- 💬 English and Hindi language support
+
+---
+
+## 🧪 Testing
+
+```bash
+npm run test
+```
+
+---
+
+## 📦 Build
+
+```bash
+npm run build
+```
+
+---
+
+## 🚀 Deployment
+
+Describe where it’s deployed:
+
+- Vercel / Netlify / AWS / Azure
+
+Example:
+
+```bash
+npm run build
+# deploy dist/ folder
+```
+
+---
+
+## 📸 Adding Screenshots
+
+Store images in:
+
+```
+docs/images/
+```
+
+Reference them like:
+
+```
+![Feature](docs/images/feature.png)
+```
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create a new branch
+3. Commit changes
+4. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+Your Name
+
+- GitHub: https://github.com/your-username
+- LinkedIn: https://linkedin.com/in/your-profile

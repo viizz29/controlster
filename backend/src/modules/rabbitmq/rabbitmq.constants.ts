@@ -12,13 +12,10 @@ export const WORKER_CONFIG_ALLOCATION_EVENT = 'worker-config.allocation';
 export function getRmqServerOptions(
   config: ConfigService,
 ): MicroserviceOptions {
-
   const hostName = config.getOrThrow('RABBITMQ_HOST');
   const userName = config.getOrThrow('RABBITMQ_USER');
   const password = config.getOrThrow('RABBITMQ_PASSWORD');
   const port = 5672; // config.getOrThrow('RABBITMQ_PORT');
-
-
 
   const url = `amqp://${userName}:${password}@${hostName}:${port}`;
 

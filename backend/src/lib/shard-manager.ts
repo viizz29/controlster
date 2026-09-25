@@ -80,6 +80,10 @@ export class ShardManager implements OnModuleInit, OnModuleDestroy {
     return sequelize;
   }
 
+  getConnections(){
+    return this.connections;
+  }
+
   async onModuleDestroy() {
     for (const [shardId, sequelize] of this.connections) {
       await sequelize.close();

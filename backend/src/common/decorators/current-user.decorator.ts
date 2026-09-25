@@ -11,9 +11,11 @@ export const CurrentUser = createParamDecorator(
     const user = request.user;
 
     const usss = data ? user?.[data] : user;
-    if (usss.userId) {
-      usss.userId = Number(usss.userId);
-    }
+
+    // be careful, will not work with bigint
+    // if (usss.userId) {
+    //   usss.userId = Number(usss.userId);
+    // }
     return usss;
   },
 );

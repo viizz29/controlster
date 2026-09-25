@@ -1,4 +1,4 @@
-import { Controller, Inject, Post } from '@nestjs/common';
+import { Controller, Get, Inject, Post } from '@nestjs/common';
 import { EventPattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
 import { Logger } from 'nestjs-pino';
 import {
@@ -7,10 +7,12 @@ import {
   WORKER_CONFIG_ALLOCATION_REQUEST_EVENT,
 } from './rabbitmq.constants';
 import { RabbitMqService } from './rabbitmq.service';
+import { WorkerRegistryService } from './worker-registry.service';
+import { SecretsService, shardPasswordAad } from '../shards/secrets.service';
+import { ShardsService } from '../shards/shards.service';
 import { Public } from 'src/common/decorators/public.decorator';
 import { REDIS_CLIENT } from '../redis/redis.module';
 import Redis from 'ioredis';
-import { ConfigService } from '@nestjs/config';
 
 export interface SampleEventPayload {
   eventId?: string;
@@ -42,7 +44,9 @@ export class RabbitMqController {
     private readonly eventsService: RabbitMqService,
     private readonly logger: Logger,
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
-    private readonly configService: ConfigService,
+    private readonly workerRegistry: WorkerRegistryService,
+    private readonly shardsService: ShardsService,
+    private readonly secrets: SecretsService,
   ) {}
 
   @EventPattern(WORKER_CONFIG_ALLOCATION_REQUEST_EVENT)
@@ -63,26 +67,37 @@ export class RabbitMqController {
       `Received "${WORKER_CONFIG_ALLOCATION_REQUEST_EVENT}" for service id: ${serviceInstanceId}`,
     );
 
-    const workerId = 0;
+    const workerId = this.workerRegistry.allocate(serviceInstanceId);
+
+    const shards = await this.shardsService.findAll();
 
     const key = `worker-config:${serviceInstanceId}`;
     const value: WorkerConfig = {
       serviceInstanceId,
       workerId,
-      shards: {
-        shard1: {
-          host: this.configService.getOrThrow<string>('DB_HOST'),
-          port: 5432,
-          userName: this.configService.getOrThrow<string>('DB_USERNAME'),
-          password: this.configService.getOrThrow<string>('DB_PASSWORD'),
-          database: 'scalable1_dev',
-        },
-      },
+      shards: Object.fromEntries(
+        shards.map((shard) => [
+          String(shard.id),
+          {
+            host: shard.host,
+            port: shard.port,
+            userName: shard.userName,
+            password: this.secrets.decrypt(
+              shard.password,
+              shardPasswordAad(shard.host, shard.database),
+            ),
+            database: shard.database,
+          },
+        ]),
+      ),
     };
 
     await this.redis.set(key, JSON.stringify(value), 'EX', 60);
 
-    this.eventsService.emitEvent(WORKER_CONFIG_ALLOCATION_EVENT, {});
+    this.eventsService.emitEvent(WORKER_CONFIG_ALLOCATION_EVENT, {
+      serviceInstanceId,
+      workerId,
+    });
   }
 
   @EventPattern(SAMPLE_EVENT)
@@ -114,5 +129,11 @@ export class RabbitMqController {
       },
     };
     return this.eventsService.emitSampleEvent(event);
+  }
+
+  @Public()
+  @Get('worker-ids')
+  listWorkerIds() {
+    return this.workerRegistry.getAllocations();
   }
 }

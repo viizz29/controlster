@@ -18,8 +18,9 @@ export default Joi.object({
   RABBITMQ_HOST: Joi.string().default('127.0.0.1'),
   RABBITMQ_USER: Joi.string().default(''),
   RABBITMQ_PASSWORD: Joi.string().default(''),
-  RABBITMQ_ENABLED: Joi.boolean().default(false),
+  RABBITMQ_ENABLED: Joi.boolean().default(true),
 
+  SHARD_ENCRYPTION_KEY: Joi.string().base64().length(44).required(),
 
   DB_HOST: Joi.string().default('127.0.0.1'),
   DB_DATABASE: Joi.string().required(),
@@ -70,4 +71,6 @@ export default Joi.object({
   DATABASE_USER_FOR_PROJECTS: Joi.string().default(`user99`),
 
   DATABASE_USER_FOR_PROJECTS_PASSWORD: Joi.string().default(`pass22`),
+
+  ENABLE_ACCOUNT_APIS: Joi.boolean().default(false),
 });

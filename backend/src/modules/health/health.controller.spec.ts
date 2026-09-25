@@ -7,12 +7,16 @@ import {
   DiskHealthIndicator,
 } from '@nestjs/terminus';
 import { RedisHealthIndicator } from './redis-health-indicator';
+import { RabbitMqHealthIndicator } from './rabbitmq-health-indicator';
+import { ShardHealthIndicator } from 'src/lib/shard-health-indicator';
 
 describe('HealthController', () => {
   let controller: HealthController;
   let healthCheckService: jest.Mocked<HealthCheckService>;
   let sequelize: jest.Mocked<SequelizeHealthIndicator>;
   let redisIndicator: jest.Mocked<RedisHealthIndicator>;
+  let rabbitMqIndicator: jest.Mocked<RabbitMqHealthIndicator>;
+  let shardHealth: jest.Mocked<ShardHealthIndicator>;
   let memory: jest.Mocked<MemoryHealthIndicator>;
   let disk: jest.Mocked<DiskHealthIndicator>;
 
@@ -33,6 +37,14 @@ describe('HealthController', () => {
           useValue: { isHealthy: jest.fn() },
         },
         {
+          provide: RabbitMqHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: ShardHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
           provide: MemoryHealthIndicator,
           useValue: { checkHeap: jest.fn(), checkRSS: jest.fn() },
         },
@@ -47,6 +59,8 @@ describe('HealthController', () => {
     healthCheckService = module.get(HealthCheckService);
     sequelize = module.get(SequelizeHealthIndicator);
     redisIndicator = module.get(RedisHealthIndicator);
+    rabbitMqIndicator = module.get(RabbitMqHealthIndicator);
+    shardHealth = module.get(ShardHealthIndicator);
     memory = module.get(MemoryHealthIndicator);
     disk = module.get(DiskHealthIndicator);
   });
@@ -69,30 +83,30 @@ describe('HealthController', () => {
       expect(result).toEqual(okResult);
     });
 
-    it('should register database, redis, memory_heap, memory_rss, and storage checks', async () => {
+    it('should register database, redis, rabbitmq, memory_heap, memory_rss, and storage checks', async () => {
       healthCheckService.check.mockResolvedValue({ status: 'ok' } as any);
 
       await controller.check();
 
       const checks = healthCheckService.check.mock.calls[0][0];
-      expect(checks).toHaveLength(5);
+      expect(checks).toHaveLength(6);
     });
 
-    it('should pass database pingCheck to health.check', async () => {
+    it('should pass shard isHealthy to health.check', async () => {
       healthCheckService.check.mockImplementation(async (checks) => {
         for (const check of checks) {
           await check();
         }
         return { status: 'ok' } as any;
       });
-      sequelize.pingCheck.mockResolvedValue({
+      shardHealth.isHealthy.mockResolvedValue({
         status: 'up',
         message: 'ok',
       } as any);
 
       await controller.check();
 
-      expect(sequelize.pingCheck).toHaveBeenCalledWith('database');
+      expect(shardHealth.isHealthy).toHaveBeenCalledTimes(1);
     });
 
     it('should pass redis isHealthy to health.check', async () => {
@@ -108,7 +122,23 @@ describe('HealthController', () => {
 
       await controller.check();
 
-      expect(redisIndicator.isHealthy).toHaveBeenCalledWith('redis');
+      expect(redisIndicator.isHealthy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should pass rabbitmq isHealthy to health.check', async () => {
+      healthCheckService.check.mockImplementation(async (checks) => {
+        for (const check of checks) {
+          await check();
+        }
+        return { status: 'ok' } as any;
+      });
+      rabbitMqIndicator.isHealthy.mockResolvedValue({
+        status: 'up',
+      } as any);
+
+      await controller.check();
+
+      expect(rabbitMqIndicator.isHealthy).toHaveBeenCalledTimes(1);
     });
 
     it('should pass memory checkHeap with 300MB threshold', async () => {
@@ -194,6 +224,7 @@ describe('HealthController', () => {
       expect(healthCheckService.check).not.toHaveBeenCalled();
       expect(sequelize.pingCheck).not.toHaveBeenCalled();
       expect(redisIndicator.isHealthy).not.toHaveBeenCalled();
+      expect(rabbitMqIndicator.isHealthy).not.toHaveBeenCalled();
       expect(memory.checkHeap).not.toHaveBeenCalled();
       expect(memory.checkRSS).not.toHaveBeenCalled();
       expect(disk.checkStorage).not.toHaveBeenCalled();
@@ -201,7 +232,7 @@ describe('HealthController', () => {
   });
 
   describe('GET /health/ready', () => {
-    it('should call health.check with database and redis only', async () => {
+    it('should call health.check with shard, redis, and rabbitmq only', async () => {
       const okResult = { status: 'ok', details: {} };
       healthCheckService.check.mockResolvedValue(okResult as any);
 
@@ -211,29 +242,29 @@ describe('HealthController', () => {
       expect(result).toEqual(okResult);
     });
 
-    it('should register only 2 checks (database and redis)', async () => {
+    it('should register only 3 checks (shard, redis, and rabbitmq)', async () => {
       healthCheckService.check.mockResolvedValue({ status: 'ok' } as any);
 
       await controller.ready();
 
       const checks = healthCheckService.check.mock.calls[0][0];
-      expect(checks).toHaveLength(2);
+      expect(checks).toHaveLength(3);
     });
 
-    it('should pass database pingCheck to readiness check', async () => {
+    it('should pass shard isHealthy to readiness check', async () => {
       healthCheckService.check.mockImplementation(async (checks) => {
         for (const check of checks) {
           await check();
         }
         return { status: 'ok' } as any;
       });
-      sequelize.pingCheck.mockResolvedValue({
+      shardHealth.isHealthy.mockResolvedValue({
         status: 'up',
       } as any);
 
       await controller.ready();
 
-      expect(sequelize.pingCheck).toHaveBeenCalledWith('database');
+      expect(shardHealth.isHealthy).toHaveBeenCalledTimes(1);
     });
 
     it('should pass redis isHealthy to readiness check', async () => {
@@ -249,7 +280,7 @@ describe('HealthController', () => {
 
       await controller.ready();
 
-      expect(redisIndicator.isHealthy).toHaveBeenCalledWith('redis');
+      expect(redisIndicator.isHealthy).toHaveBeenCalledTimes(1);
     });
 
     it('should not check memory or disk', async () => {
